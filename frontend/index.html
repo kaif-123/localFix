@@ -2929,7 +2929,7 @@
           background: #fff;
           border-top: 1px solid var(--gray2);
 
-          display: flex;
+          display: none;
           align-items: center;
           justify-content: space-around;
 
@@ -8700,6 +8700,8 @@ function toggleGlobalNavs(id) {
   const workerToken = localStorage.getItem("workerToken");
   const savedType = localStorage.getItem("currentUserType");
 
+  document.getElementById("phone-frame").style.visibility = "hidden";
+
   if (savedType === "worker" && workerToken) {
     currentUserType = "worker";
     goTo("worker-dashboard");
@@ -8710,7 +8712,14 @@ function toggleGlobalNavs(id) {
     goTo("splash");
   }
 
-  toggleGlobalNavs("splash");
+  toggleGlobalNavs(
+    savedType === "worker" && workerToken ? "worker-dashboard" :
+    savedType === "user" && token ? "dashboard" : "splash"
+  );
+
+  setTimeout(() => {
+    document.getElementById("phone-frame").style.visibility = "visible";
+  }, 100);
 });
         const navMap = {
           home: "dashboard",
