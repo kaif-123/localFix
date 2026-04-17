@@ -6601,10 +6601,10 @@
 
 
 
-const BASE_URL = "http://localhost:3000/api";
+const BASE_URL = "https://localfix-s5hs.onrender.com/api";
 
 
-const SOCKET_URL = "http://localhost:3000";
+const SOCKET_URL = "https://localfix-s5hs.onrender.com";
 const socket = io(SOCKET_URL);
 
 // User register karo jab login ho
@@ -6838,7 +6838,7 @@ async function loadDashboard() {
     userLng = lng; 
 
     // Nearby workers fetch karo
-    const wRes = await fetch(`http://localhost:3000/api/workers/nearby?latitude=${lat}&longitude=${lng}`, {
+    const wRes = await fetch(`https://localfix-s5hs.onrender.com/api/workers/nearby?latitude=${lat}&longitude=${lng}`, {
       headers: { Authorization: "Bearer " + token }
     });
     const wData = await wRes.json();
@@ -6881,7 +6881,7 @@ async function loadDashboard() {
   });
 
   // Book Again fetch karo
-  const bRes = await fetch("http://localhost:3000/api/user/book-again", {
+  const bRes = await fetch("https://localfix-s5hs.onrender.com/api/user/book-again", {
     headers: { Authorization: "Bearer " + token }
   });
   const bData = await bRes.json();
@@ -7032,7 +7032,7 @@ async function saveProfile() {
 
 async function loadUserBookings() {
   const token = localStorage.getItem("token");
-  const res = await fetch("http://localhost:3000/api/user/bookings", {
+  const res = await fetch("https://localfix-s5hs.onrender.com/api/user/bookings", {
     headers: { Authorization: "Bearer " + token }
   });
   const data = await res.json();
@@ -7093,7 +7093,7 @@ function formatDate(dateStr) {
 
 async function loadWorkerJobs() {
   const token = localStorage.getItem("workerToken");
-  const res = await fetch("http://localhost:3000/api/worker/jobs", {
+  const res = await fetch("https://localfix-s5hs.onrender.com/api/worker/jobs", {
     headers: { Authorization: "Bearer " + token }
   });
   const data = await res.json();
@@ -7138,7 +7138,7 @@ async function loadWorkerJobs() {
 
 async function loadWorkerEarnings() {
   const token = localStorage.getItem("workerToken");
-  const res = await fetch("http://localhost:3000/api/worker/earnings", {
+  const res = await fetch("https://localfix-s5hs.onrender.com/api/worker/earnings", {
     headers: { Authorization: "Bearer " + token }
   });
   const data = await res.json();
@@ -7224,7 +7224,7 @@ async function confirmWithdrawal() {
   
   const balance = parseInt(document.getElementById("earn-wallet-balance")?.textContent?.replace(/[₹,]/g, "") || "0");
   const token = localStorage.getItem("workerToken");
-  const res = await fetch("http://localhost:3000/api/worker/withdraw", {
+  const res = await fetch("https://localfix-s5hs.onrender.com/api/worker/withdraw", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -7511,7 +7511,7 @@ async function uploadWorkerPhoto(input) {
   const token = localStorage.getItem("workerToken");
   
   try {
-    const res = await fetch("http://localhost:5000/api/worker/upload-photo", {
+    const res = await fetch("https://localfix-s5hs.onrender.com/api/worker/upload-photo", {
       method: "POST",
       headers: { Authorization: "Bearer " + token },
       body: formData  // Content-Type mat lagao — browser khud lagata hai
@@ -7521,7 +7521,7 @@ async function uploadWorkerPhoto(input) {
     console.log("Upload response:", data);
     if (data.success) {
       showToast("✅ Photo updated!");
-      updateWorkerAvatar("http://localhost:5000" + data.photoUrl);
+      updateWorkerAvatar("https://localfix-s5hs.onrender.com" + data.photoUrl);
     } else {
       showToast("❌ " + data.message);
     }
@@ -7854,7 +7854,7 @@ async function loadWorkerDashboard() {
   if (greetEl) greetEl.textContent = greeting;
 
   const token = localStorage.getItem("workerToken");
-  const res = await fetch("http://localhost:3000/api/worker/dashboard-stats", {
+  const res = await fetch("https://localfix-s5hs.onrender.com/api/worker/dashboard-stats", {
     headers: { Authorization: "Bearer " + token }
   });
   const data = await res.json();
@@ -8239,7 +8239,7 @@ async function loadChatHistory() {
   }
 
   const token = localStorage.getItem("token") || localStorage.getItem("workerToken");
-  const res = await fetch(`http://localhost:3000/api/chat/${currentBookingId}`, {
+  const res = await fetch(`https://localfix-s5hs.onrender.com/api/chat/${currentBookingId}`, {
     headers: { Authorization: "Bearer " + token }
   });
   const data = await res.json();
@@ -8353,7 +8353,7 @@ socket.on("worker-accepted", (data) => {
 
   handleWorkerAccepted(worker);
 
-  fetch(`http://localhost:3000/api/worker/${data.workerId}/location`, {
+  fetch(`https://localfix-s5hs.onrender.com/api/worker/${data.workerId}/location`, {
     headers: { Authorization: "Bearer " + localStorage.getItem("token") }
   })
   .then(r => r.json())
@@ -9166,7 +9166,7 @@ const servicesList = Object.entries(subcats).flatMap(([category, data]) =>
                 });
 
                 goTo("map-screen");
-                const wRes = await fetch(`http://localhost:3000/api/workers/nearby?latitude=${latitude}&longitude=${longitude}&category=${selectedCat}`, {
+                const wRes = await fetch(`https://localfix-s5hs.onrender.com/api/workers/nearby?latitude=${latitude}&longitude=${longitude}&category=${selectedCat}`, {
                   headers: { Authorization: "Bearer " + localStorage.getItem("token") }
                 });
                 const wData = await wRes.json();
@@ -9219,7 +9219,7 @@ const servicesList = Object.entries(subcats).flatMap(([category, data]) =>
         const bookingId = window.currentBookingId;
         if (bookingId) {
           const token = localStorage.getItem("token");
-          await fetch(`http://localhost:3000/api/booking/${bookingId}/cancel`, {
+          await fetch(`https://localfix-s5hs.onrender.com/api/booking/${bookingId}/cancel`, {
             method: "POST",
             headers: { Authorization: "Bearer " + token }
           });
@@ -9455,7 +9455,7 @@ function drawWorkerRoute(wLat, wLng, uLat, uLng) {
               const bookingId = window.currentBookingId;
               if (bookingId) {
                 const token = localStorage.getItem("token");
-                await fetch(`http://localhost:3000/api/booking/${bookingId}/cancel`, {
+                await fetch(`https://localfix-s5hs.onrender.com/api/booking/${bookingId}/cancel`, {
                   method: "POST",
                   headers: { Authorization: "Bearer " + token }
                 });
@@ -9574,7 +9574,7 @@ function drawWorkerRoute(wLat, wLng, uLat, uLng) {
   const bookingId = window.currentBookingId;
   if (bookingId) {
     const token = localStorage.getItem("token");
-    await fetch(`http://localhost:3000/api/booking/${bookingId}/cancel`, {
+    await fetch(`https://localfix-s5hs.onrender.com/api/booking/${bookingId}/cancel`, {
       method: "POST",
       headers: { Authorization: "Bearer " + token }
     });
@@ -9608,7 +9608,7 @@ function drawWorkerRoute(wLat, wLng, uLat, uLng) {
   const bookingId = window.currentBookingId;
   if (bookingId) {
     const token = localStorage.getItem("token");
-    await fetch(`http://localhost:3000/api/booking/${bookingId}/cancel`, {
+    await fetch(`https://localfix-s5hs.onrender.com/api/booking/${bookingId}/cancel`, {
       method: "POST",
       headers: { Authorization: "Bearer " + token }
     });
@@ -9633,7 +9633,7 @@ function drawWorkerRoute(wLat, wLng, uLat, uLng) {
                   const bookingId = window.currentBookingId;
                   if (bookingId) {
                     const token = localStorage.getItem("token");
-                    await fetch(`http://localhost:3000/api/booking/${bookingId}/cancel`, {
+                    await fetch(`https://localfix-s5hs.onrender.com/api/booking/${bookingId}/cancel`, {
                       method: "POST",
                       headers: { Authorization: "Bearer " + token }
                     });
@@ -9652,7 +9652,7 @@ function drawWorkerRoute(wLat, wLng, uLat, uLng) {
 //   if (bookingId) {
 //     const token = localStorage.getItem("token");
 //     try {
-//       const res = await fetch(`http://localhost:3000/api/booking/${bookingId}/cancel`, {
+//       const res = await fetch(`https://localfix-s5hs.onrender.com/api/booking/${bookingId}/cancel`, {
 //         method: "POST",
 //         headers: { Authorization: "Bearer " + token }
 //       });
@@ -9738,7 +9738,7 @@ function drawWorkerRoute(wLat, wLng, uLat, uLng) {
           console.log("Comment value:", comment); 
 
           const token = localStorage.getItem("token");
-          const res = await fetch(`http://localhost:3000/api/booking/${currentBookingId}/rating`, {
+          const res = await fetch(`https://localfix-s5hs.onrender.com/api/booking/${currentBookingId}/rating`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -10134,7 +10134,7 @@ function openGoogleMaps() {
 
           // DB mein save karo
           const token = localStorage.getItem("workerToken");
-          const res = await fetch(`http://localhost:3000/api/booking/${currentBookingId}/amount`, {
+          const res = await fetch(`https://localfix-s5hs.onrender.com/api/booking/${currentBookingId}/amount`, {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -10183,7 +10183,7 @@ function openGoogleMaps() {
           const token = localStorage.getItem("token");
           
           // Order create karo backend se
-          const res = await fetch("http://localhost:3000/api/payment/create-order", {
+          const res = await fetch("https://localfix-s5hs.onrender.com/api/payment/create-order", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -10211,7 +10211,7 @@ function openGoogleMaps() {
             order_id: data.order.id,
             handler: async function(response) {
               // Payment success — verify karo
-              const verifyRes = await fetch("http://localhost:3000/api/payment/verify", {
+              const verifyRes = await fetch("https://localfix-s5hs.onrender.com/api/payment/verify", {
                 method: "POST",
                 headers: {
                   "Content-Type": "application/json",
@@ -10257,7 +10257,7 @@ function openGoogleMaps() {
           }
 
           const token = localStorage.getItem("token");
-          const res = await fetch(`http://localhost:3000/api/booking/${currentBookingId}/complete`, {
+          const res = await fetch(`https://localfix-s5hs.onrender.com/api/booking/${currentBookingId}/complete`, {
             method: "POST",
             headers: { Authorization: "Bearer " + token }
           });
@@ -10313,7 +10313,7 @@ function openGoogleMaps() {
 
         async function loadWorkerReviews() {
           const token = localStorage.getItem("workerToken");
-          const res = await fetch("http://localhost:3000/api/worker/reviews", {
+          const res = await fetch("https://localfix-s5hs.onrender.com/api/worker/reviews", {
             headers: { Authorization: "Bearer " + token }
           });
           const data = await res.json();
@@ -10601,7 +10601,7 @@ function openGoogleMaps() {
             return;
           }
           const token = localStorage.getItem("token");
-          const res = await fetch("http://localhost:3000/api/report", {
+          const res = await fetch("https://localfix-s5hs.onrender.com/api/report", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
