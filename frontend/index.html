@@ -6625,10 +6625,15 @@ async function apiRequest(endpoint, method = "GET", body = null) {
     // const token = localStorage.getItem("workerToken") || localStorage.getItem("token");
 
     let token;
+    const workerToken = localStorage.getItem("workerToken");
+    const userToken = localStorage.getItem("token");
+    
     if (endpoint.startsWith("/worker/") || endpoint.startsWith("/worker?")) {
-      token = localStorage.getItem("workerToken");
+      token = workerToken;
+    } else if (endpoint.includes("/booking/") && workerToken && localStorage.getItem("currentUserType") === "worker") {
+      token = workerToken;
     } else {
-      token = localStorage.getItem("token");
+      token = userToken;
     }
 
     const res = await fetch(`${BASE_URL}${endpoint}`, {
