@@ -8692,13 +8692,19 @@ function toggleGlobalNavs(id) {
         document.addEventListener("DOMContentLoaded", () => {
   updateNavHighlight();
   const token = localStorage.getItem("token");
-  
-  if (token) {
+  const workerToken = localStorage.getItem("workerToken");
+  const savedType = localStorage.getItem("currentUserType");
+
+  if (savedType === "worker" && workerToken) {
+    currentUserType = "worker";
+    goTo("worker-dashboard");
+  } else if (savedType === "user" && token) {
+    currentUserType = "user";
     goTo("dashboard");
   } else {
-    goTo("splash"); // auth-choice ki jagah splash pe bhejo
+    goTo("splash");
   }
-  
+
   toggleGlobalNavs("splash");
 });
         const navMap = {
