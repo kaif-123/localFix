@@ -552,6 +552,9 @@ app.post("/api/booking/create", authMiddleware, async (req, res) => {
     console.log("Worker socket:", connectedWorkers[workers[0]._id.toString()]);
     console.log("All connected workers:", connectedWorkers);
     const user = await User.findById(req.userId).select("name phone");
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
 
     const workerSocketId = connectedWorkers[workers[0]._id.toString()];
     if (workerSocketId) {
