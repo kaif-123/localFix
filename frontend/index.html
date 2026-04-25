@@ -9331,7 +9331,7 @@ function initTrackingMap(workerLat, workerLng) {
   workerMarker = L.marker([workerLat, workerLng], { icon: wIcon }).addTo(trackingMap);
   drawRoute(trackingMap, workerLat, workerLng, userLat, userLng);
   const dist = getDistance(userLat, userLng, workerLat, workerLng);
-  if (dist < 0.1) {
+  if (dist < 50) {
     document.getElementById("otp-bar").style.display = "block";
   }
 
@@ -9351,7 +9351,7 @@ function updateWorkerOnMap(workerLat, workerLng) {
 
   // Reached check — 100m ke andar
   const dist = getDistance(userLat, userLng, workerLat, workerLng);
-  if (dist < 0.1) {
+  if (dist < 50) {
     document.getElementById("otp-bar").style.display = "block";
   }
 }
