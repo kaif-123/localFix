@@ -34,12 +34,12 @@ const razorpay = new Razorpay({
 
 
 
-// 🔥 DB connect
+// DB connect
 mongoose.connect(process.env.MONGODB_URI)
-  .then(() => console.log("MongoDB Connected ✅"))
+  .then(() => console.log("MongoDB Connected "))
   .catch(err => console.log(err));
 
-// 🔥 SCHEMA (yahan likhna hai)
+//  SCHEMA
 const userSchema = new mongoose.Schema({
   name: String,
   phone: String,
@@ -55,7 +55,7 @@ const userSchema = new mongoose.Schema({
   savedWorkers: [{ type: mongoose.Schema.Types.ObjectId, ref: "Worker" }], 
   status: {
     type: String,
-    default: "pending" // 🔥 default
+    default: "pending" //  default
   }
 });
 const User = mongoose.model("User", userSchema);
@@ -87,7 +87,7 @@ const workerSchema = new mongoose.Schema({
   isOnline: { type: Boolean, default: false },
   location: {
   type: { type: String, default: "Point" },
-  coordinates: { type: [Number], default: [0, 0] } // [longitude, latitude]
+  coordinates: { type: [Number], default: [0, 0] } // longitude, latitude
   },
   rating: { type: Number, default: 0 },
   totalJobs: { type: Number, default: 0 },
@@ -177,7 +177,7 @@ const notificationSchema = new mongoose.Schema({
 });
 const Notification = mongoose.model("Notification", notificationSchema);
 
-// ✅ test
+// test
 app.get("/", (req, res) => {
   res.send("Backend running ✅");
 });
@@ -188,7 +188,7 @@ const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
     user: process.env.EMAIL,
-    pass: process.env.APP_PASS // 🔥 normal password nahi
+    pass: process.env.APP_PASS 
   }
 });
 
@@ -210,7 +210,7 @@ async function sendSmsOtp(phone, otp) {
       "Content-Type": "application/json"
     },
     body: JSON.stringify({
-      route: "q",                          // 👈 "otp" ki jagah "q"
+      route: "q",                          
       message: `Your LocalFix OTP is ${otp}. Do not share with anyone.`,
       language: "english",
       numbers: cleanPhone
@@ -273,7 +273,7 @@ app.post("/api/auth/verify-otp", async (req, res) => {
     return res.status(400).json({ success: false, message: "Invalid OTP" });
   }
 
-  // 🔥 ye use karo - $set + $unset directly DB mein
+  // $set + $unset directly DB mein
   await User.updateOne(
     { email },
     {
@@ -345,13 +345,13 @@ app.post("/api/auth/login", async (req, res) => {
     });
 
   } catch (err) {
-    console.error("LOGIN ERROR:", err); // 👈 ye add karo
+    console.error("LOGIN ERROR:", err);
     res.status(500).json({ success: false, message: "Server error" });
   }
 });
 
-// ✅ user signup
-// 🔥 temporary DB (upar likhna hai, routes ke bahar)
+//  user signup
+
 app.post("/api/auth/signup", async (req, res) => {
   const { name, phone, email, password } = req.body;
   console.log("Signup hit:", req.body);
@@ -363,7 +363,7 @@ app.post("/api/auth/signup", async (req, res) => {
   }
 
   try {
-    // 🔍 duplicate check
+    
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
@@ -376,7 +376,7 @@ app.post("/api/auth/signup", async (req, res) => {
     // 🔥 OTP generate
     const otp = generateOtp();
 
-    // 💾 save user with pending status
+    // save user with pending status
     const newUser = new User({
       name,
       phone,
@@ -388,7 +388,7 @@ app.post("/api/auth/signup", async (req, res) => {
 
     await newUser.save();
 
-    // 📧 send email
+    // send email
     await transporter.sendMail({
       from: process.env.EMAIL,
       to: email,
@@ -456,7 +456,7 @@ app.post("/api/worker/login", async (req, res) => {
 });
 
 
-// ✅ worker Signup
+//  worker Signup
 app.post("/api/worker/register", async (req, res) => {
   const { name, phone, aadhar, category, skills, password } = req.body;
 
@@ -467,7 +467,7 @@ app.post("/api/worker/register", async (req, res) => {
   try {
     const existing = await Worker.findOne({ phone });
     
-    // 👇 Agar approved hai to block karo
+    // Agar approved hai to block karo
     if (existing && existing.status === "approved") {
       return res.status(400).json({ success: false, message: "Phone already registered" });
     }
@@ -476,7 +476,7 @@ app.post("/api/worker/register", async (req, res) => {
     const otp = 1234;
 
     if (existing && existing.status === "pending") {
-      // 👇 Purana pending record update karo — naya OTP set karo
+      // Purana pending record update karo — naya OTP set karo
       await Worker.updateOne({ phone }, {
         $set: { name, aadhar, category, skills: skills || [], password: hashedPassword, otp }
       });
@@ -548,7 +548,6 @@ app.post("/api/booking/create", authMiddleware, async (req, res) => {
     });
 
     await booking.save();
-    // booking.save() ke baad ye add karo temporarily
     console.log("Worker socket:", connectedWorkers[workers[0]._id.toString()]);
     console.log("All connected workers:", connectedWorkers);
     const user = await User.findById(req.userId).select("name phone");
@@ -560,12 +559,12 @@ app.post("/api/booking/create", authMiddleware, async (req, res) => {
     if (workerSocketId) {
       io.to(workerSocketId).emit("new-booking", {
         bookingId: booking._id,
-        userName: user.name,        // 👈 real name
-        userPhone: user.phone,      // 👈 real phone
+        userName: user.name,        
+        userPhone: user.phone,      
         category,
         subService,
         address,
-        userLat: latitude,   // 👈 ye add karo
+        userLat: latitude,   
         userLng: longitude  
       });
     }
@@ -592,7 +591,7 @@ app.post("/api/booking/create", authMiddleware, async (req, res) => {
   }
 });
 
-// Middleware — token verify karo
+// Middleware — token verify
 function authMiddleware(req, res, next) {
   const token = req.headers.authorization?.split(" ")[1];
   if (!token) return res.status(401).json({ success: false, message: "No token" });
@@ -711,7 +710,7 @@ app.post("/api/booking/:id/complete", authMiddleware, async (req, res) => {
   
   const booking = await Booking.findById(req.params.id);
   
-  // Worker ko notify karo
+  // Worker notify
   const workerSocketId = connectedWorkers[booking.worker.toString()];
   if (workerSocketId) {
     io.to(workerSocketId).emit("job-completed", { bookingId: req.params.id });
@@ -730,14 +729,14 @@ app.post("/api/booking/:id/rating", authMiddleware, async (req, res) => {
   try {
     const { rating, review, tags, comment } = req.body;
     
-    // Booking mein save karo
+    // Booking save
     const booking = await Booking.findByIdAndUpdate(
       req.params.id,
       { $set: { rating, review, tags, comment } },
       { new: true }
     );
 
-    // Worker ka average rating update karo
+    // Worker ka average rating update
     const allBookings = await Booking.find({ 
       worker: booking.worker, 
       rating: { $exists: true, $gt: 0 } 
@@ -762,10 +761,10 @@ app.get("/api/worker/reviews", workerAuthMiddleware, async (req, res) => {
     rating: { $gt: 0 }
   })
   .populate("user", "name")
-  .select("user rating comment tags subService category createdAt")  // ✅ ye add kro
+  .select("user rating comment tags subService category createdAt")
   .sort({ createdAt: -1 });
 
-  // ✅ Average rating backend se calculate karke bhejna better hai
+  // Average rating backend se calculate karke bhej diye
   const totalRatings = bookings.length;
   const avgRating = totalRatings > 0
     ? (bookings.reduce((sum, b) => sum + b.rating, 0) / totalRatings).toFixed(1)
@@ -774,8 +773,8 @@ app.get("/api/worker/reviews", workerAuthMiddleware, async (req, res) => {
   res.json({ 
     success: true, 
     bookings,
-    avgRating,      // ✅ frontend ko seedha mil jayega
-    totalRatings    // ✅ ye bhi
+    avgRating,      
+    totalRatings   
   });
 });
 
@@ -783,7 +782,7 @@ app.get("/api/worker/reviews", workerAuthMiddleware, async (req, res) => {
 app.get("/api/user/bookings", authMiddleware, async (req, res) => {
   const bookings = await Booking.find({ 
     user: req.userId,
-    status: { $in: ["completed", "cancelled"] }  // 👈 sirf ye do
+    status: { $in: ["completed", "cancelled"] }
   }).populate("worker", "name").sort({ createdAt: -1 });
   res.json({ success: true, bookings });
 });
@@ -792,7 +791,7 @@ app.get("/api/user/bookings", authMiddleware, async (req, res) => {
 app.get("/api/worker/jobs", workerAuthMiddleware, async (req, res) => {
   const bookings = await Booking.find({ 
     worker: req.workerId,
-    status: { $in: ["completed", "cancelled"] }  // 👈 sirf ye do
+    status: { $in: ["completed", "cancelled"] }  
   }).populate("user", "name").sort({ createdAt: -1 });
   res.json({ success: true, bookings });
 });
@@ -808,7 +807,7 @@ app.post("/api/payment/create-order", authMiddleware, async (req, res) => {
   const { amount, bookingId } = req.body;
   
   const order = await razorpay.orders.create({
-    amount: amount * 100, // paise mein (rupees * 100)
+    amount: amount * 100, 
     currency: "INR",
     receipt: bookingId
   });
@@ -826,7 +825,7 @@ app.post("/api/payment/verify", authMiddleware, async (req, res) => {
   const generated_signature = hmac.digest("hex");
 
   if (generated_signature === razorpay_signature) {
-    // Payment verified — booking update karo
+    // Payment verified — booking update
     const booking = await Booking.findById(bookingId);
     const commission = Math.round(booking.amount * 0.10);
     const workerEarning = booking.amount; 
@@ -841,13 +840,13 @@ app.post("/api/payment/verify", authMiddleware, async (req, res) => {
         totalPaid: booking.amount + commission
       } 
     });
-    // Worker wallet update karo
+    // Worker wallet update
     await Worker.updateOne(
       { _id: booking.worker },
       { $inc: { walletBalance: workerEarning } }
     );
 
-    // Socket se dono ko notify karo
+    // Socket se dono ko notify 
     const userSocketId = connectedUsers[booking.user.toString()];
     const workerSocketId = connectedWorkers[booking.worker.toString()];
     
@@ -974,7 +973,7 @@ app.post("/api/worker/withdraw", workerAuthMiddleware, async (req, res) => {
     return res.json({ success: false, message: "Insufficient balance" });
   }
 
-  // Withdrawal request save karo
+  // Withdrawal request save
   const withdrawal = new Withdrawal({
     worker: req.workerId,
     amount: worker.walletBalance,
@@ -982,7 +981,7 @@ app.post("/api/worker/withdraw", workerAuthMiddleware, async (req, res) => {
   });
   await withdrawal.save();
 
-  // Balance zero karo (pending mein hai)
+  // Balance zero (pending mein hai)
   await Worker.updateOne({ _id: req.workerId }, { $set: { walletBalance: 0 } });
 
   res.json({ success: true });
@@ -1040,7 +1039,7 @@ app.get("/api/workers/nearby", authMiddleware, async (req, res) => {
       }
     }).limit(6).select("name category skills rate experience location");
 
-    // Har worker ki rating aur totalJobs calculate karo
+    // Har worker ki rating aur totalJobs calculate
     const workersWithStats = await Promise.all(workers.map(async (w) => {
       const ratingData = await Booking.aggregate([
         { $match: { worker: w._id, status: "completed", rating: { $gt: 0 } } },
@@ -1168,7 +1167,6 @@ app.post("/api/booking/:id/cancel", authMiddleware, async (req, res) => {
     { new: true }
   );
   
-  // 👇 Yeh console logs add karo
   console.log("Booking:", booking);
   console.log("booking.worker:", booking?.worker);
   console.log("connectedWorkers:", connectedWorkers);
@@ -1178,7 +1176,7 @@ app.post("/api/booking/:id/cancel", authMiddleware, async (req, res) => {
   
   if (workerSocketId) {
     io.to(workerSocketId).emit("booking-cancelled", { bookingId: req.params.id });
-    console.log("✅ Event emitted to worker");
+    console.log("Event emitted to worker");
   }
   
   res.json({ success: true });
@@ -1211,7 +1209,7 @@ app.post("/api/worker/upload-photo", workerAuthMiddleware, upload.single("photo"
   res.json({ success: true, photoUrl });
 });
 
-// Static folder serve karo
+// Static folder serve 
 app.use("/uploads", express.static("uploads"));
 
 
@@ -1220,7 +1218,7 @@ app.use("/uploads", express.static("uploads"));
 
 
 
-// Connected workers track karo
+// Connected workers track 
 const connectedWorkers = {}; // { workerId: socketId }
 const connectedUsers = {};   // { userId: socketId }
 
@@ -1240,13 +1238,13 @@ async function createNotification({ userId, workerId, type, title, message, book
 io.on("connection", (socket) => {
   console.log("Socket connected:", socket.id);
 
-  // Worker connect hone pe register karo
+  // Worker connect hone pe register
   socket.on("worker-register", (workerId) => {
     connectedWorkers[workerId] = socket.id;
     console.log("Worker registered:", workerId);
   });
 
-  // User connect hone pe register karo
+  // User connect hone pe register
   socket.on("user-register", (userId) => {
     connectedUsers[userId] = socket.id;
     console.log("User registered:", userId);
@@ -1281,7 +1279,6 @@ io.on("connection", (socket) => {
     if (!booking) return;
     const userSocketId = connectedUsers[booking.user.toString()];
     
-    // ✅ ANDAR karo yeh logs
     console.log("connectedUsers:", connectedUsers);
     console.log("booking.user:", booking.user.toString());
     console.log("userSocketId:", userSocketId);
@@ -1292,13 +1289,13 @@ io.on("connection", (socket) => {
   });
 });
 
-  // Message send karo
+  // Message send
   socket.on("send-message", async ({ bookingId, senderId, senderRole, message }) => {
-    // DB mein save karo
+    // DB mein save
     const msg = new Message({ bookingId, senderId, senderRole, message });
     await msg.save();
 
-    // Booking fetch karo dono ko bhejne ke liye
+    // Booking fetch dono ko bhejne ke liye
     const booking = await Booking.findById(bookingId);
     const payload = {
       bookingId,
@@ -1308,7 +1305,7 @@ io.on("connection", (socket) => {
       createdAt: msg.createdAt
     };
 
-    // Dono ko bhejo (sender ko bhi taaki confirm ho)
+    // Dono ko bhejna h (sender ko bhi taaki confirm ho)
     const userSocketId = connectedUsers[booking.user.toString()];
     const workerSocketId = connectedWorkers[booking.worker.toString()];
 
@@ -1366,7 +1363,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// app.listen ki jagah server.listen
+// server.listen
 server.listen(process.env.PORT || 3000, "0.0.0.0", () => {
   console.log("🚀 Server running on http://localhost:3000");
 });
