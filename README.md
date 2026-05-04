@@ -245,7 +245,7 @@ Open `frontend/index.html` with Live Server (VS Code) on port 5500.
 
 **Kaif** — B.Tech CSE, Lovely Professional University  
 - 250+ LeetCode problems solved  
-- 3⭐ HackerRank (Java)  
+- 4⭐ HackerRank (Java)  
 - Secured rank 1625/28,000+ in LeetCode Biweekly Contest 179 (top 15%) with rating 1710.
 
 ---
